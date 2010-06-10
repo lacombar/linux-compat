@@ -88,6 +88,8 @@ extern void		__dev_addr_unsync(struct dev_addr_list **to, int *to_count, struct 
 
 #define seq_file_net &init_net;
 
+#define ip_route_output_key(net, rt, fl)	ip_route_output_key(rt, fl)
+
 enum nf_inet_hooks {
 	NF_INET_PRE_ROUTING = 0,
 	NF_INET_LOCAL_IN = 1,
