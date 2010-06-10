@@ -14,6 +14,9 @@
 #include <linux/kfifo.h>
 #include <linux/firmware.h>
 
+#define BUILD_BUG_ON_NOT_POWER_OF_2(n)			\
+	BUILD_BUG_ON((n) == 0 || (((n) & ((n) - 1)) != 0))
+
 #define release_firmware compat_release_firmware
 #define request_firmware compat_request_firmware
 #define request_firmware_nowait compat_request_firmware_nowait
