@@ -7,8 +7,10 @@
 
 #include <linux/skbuff.h>
 #if defined(CONFIG_PCCARD) || defined(CONFIG_PCCARD_MODULE)
+struct pcmcia_socket;
 #include <pcmcia/cs_types.h>
 #include <pcmcia/cistpl.h>
+#include <pcmcia/cs.h>
 #include <pcmcia/ds.h>
 #endif
 #include <linux/kfifo.h>
