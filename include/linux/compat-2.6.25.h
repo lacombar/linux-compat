@@ -72,7 +72,9 @@ int compat_pm_qos_power_deinit(void);
 /* Although pm_qos stuff is not implemented on <= 2.6.24 lets keep the define */
 #define PM_QOS_DEFAULT_VALUE -1
 
+#ifndef __WARN
 #define __WARN(foo) dump_stack()
+#endif
 
 #define dev_emerg(dev, format, arg...)          \
 	dev_printk(KERN_EMERG , dev , format , ## arg)
