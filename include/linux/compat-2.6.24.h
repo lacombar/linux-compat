@@ -13,6 +13,7 @@
 #include <linux/types.h>
 #include <linux/list.h>
 #include <linux/scatterlist.h>
+#include <net/sock.h>
 
 #define KEY_BLUETOOTH	237
 #define KEY_WLAN	238
@@ -161,6 +162,8 @@ struct ssb_device_id {
 /* Namespace stuff, introduced on 2.6.24 */
 #define dev_get_by_index(a, b)		dev_get_by_index(b)
 #define __dev_get_by_index(a, b)	__dev_get_by_index(b)
+#define sk_alloc(net, fam, pri, prot)	sk_alloc(fam, pri, prot, 1)
+
 
 /*
  * Display a 6 byte device address (MAC) in a readable format.
