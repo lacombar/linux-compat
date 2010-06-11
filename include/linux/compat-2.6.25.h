@@ -7,8 +7,10 @@
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25))
 
 #include <linux/types.h>
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,17))
 #include <linux/io.h>
 #include <linux/leds.h>
+#endif
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,18))
 #include <linux/hw_random.h>
 #endif
