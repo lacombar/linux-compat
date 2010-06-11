@@ -115,12 +115,22 @@ struct compat_threaded_irq {
 	struct work_struct work;
 };
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,20))
+static inline
+void compat_irq_work(void *arg)
+{
+	struct work_struct *work = arg;
+	struct compat_threaded_irq *comp = container_of(work, struct compat_threaded_irq, work);
+	comp->thread_fn(comp->irq, comp->dev_id);
+}
+#else
 static inline
 void compat_irq_work(struct work_struct *work)
 {
 	struct compat_threaded_irq *comp = container_of(work, struct compat_threaded_irq, work);
 	comp->thread_fn(comp->irq, comp->dev_id);
 }
+#endif
 
 static inline
 irqreturn_t compat_irq_dispatcher(int irq, void *dev_id)
@@ -150,7 +160,11 @@ int compat_request_threaded_irq(struct compat_threaded_irq *comp,
 	comp->handler = handler;
 	comp->thread_fn = thread_fn;
 	comp->dev_id = dev_id;
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,20))
+	INIT_WORK(&comp->work, compat_irq_work, &comp->work);
+#else
 	INIT_WORK(&comp->work, compat_irq_work);
+#endif
 
 	if (!comp->wq) {
 		snprintf(comp->wq_name, sizeof(comp->wq_name),
