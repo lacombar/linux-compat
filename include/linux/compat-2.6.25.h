@@ -8,8 +8,10 @@
 
 #include <linux/types.h>
 #include <linux/io.h>
-#include <linux/hw_random.h>
 #include <linux/leds.h>
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,18))
+#include <linux/hw_random.h>
+#endif
 #include <linux/kernel.h>
 #include <linux/netdevice.h>
 #include <linux/pm.h>
