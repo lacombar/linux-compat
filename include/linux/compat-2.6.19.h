@@ -8,16 +8,7 @@
 
 #include <linux/slab.h>
 
-static inline int
-compat_kmem_cache_destroy(struct kmem_cache *cachep)
-{
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,19))
-	return kmem_cache_destroy(cachep);
-#else
-	kmem_cache_destroy(cachep);
-	return 0;
-#endif
-}
+#define kmem_cache_destroy(cachep)	({ kmem_cache_destroy(cachep); 0; })
 
 #else /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19)) */
 
