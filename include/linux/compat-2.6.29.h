@@ -3,7 +3,9 @@
 
 #include <linux/version.h>
 #include <linux/netdevice.h>
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19))
 #include <linux/if_link.h>
+#endif
 
 /*
  * I kow this looks odd.. but 2.6.32 added the netdev_tx_t
