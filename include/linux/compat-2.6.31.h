@@ -58,16 +58,6 @@
 #define SDIO_DEVICE_ID_MARVELL_8688WLAN		0x9104
 #endif
 
-struct compat_threaded_irq {
-	unsigned int irq;
-	irq_handler_t handler;
-	irq_handler_t thread_fn;
-	void *dev_id;
-	char wq_name[64];
-	struct workqueue_struct *wq;
-	struct work_struct work;
-};
-
 /*
  * kmemleak was introduced on 2.6.31, since older kernels do not have
  * we simply ignore its tuning.
@@ -115,6 +105,15 @@ static inline struct rtable *skb_rtable(const struct sk_buff *skb)
 }
 
 /* Backport threaded IRQ support */
+struct compat_threaded_irq {
+	unsigned int irq;
+	irq_handler_t handler;
+	irq_handler_t thread_fn;
+	void *dev_id;
+	char wq_name[64];
+	struct workqueue_struct *wq;
+	struct work_struct work;
+};
 
 static inline
 void compat_irq_work(struct work_struct *work)
