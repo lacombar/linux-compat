@@ -20,6 +20,10 @@
 
 static inline void flush_delayed_work(struct delayed_work *dwork)
 {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,21))
+	cancel_delayed_work(dwork);
+	flush_scheduled_work();
+#else
 	if (del_timer_sync(&dwork->timer)) {
 		/*
 		 * This is what would happen on 2.6.32 but since we don't have
@@ -34,6 +38,7 @@ static inline void flush_delayed_work(struct delayed_work *dwork)
 		*/
 	}
 	flush_work(&dwork->work);
+#endif
 }
 
 /*
