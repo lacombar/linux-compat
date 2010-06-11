@@ -6,7 +6,28 @@
 /* Compat work for 2.6.18 */
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18))
 
+#include <linux/gfp.h>
+#include <linux/netdevice.h>
+#include <linux/skbuff.h>
+
 #define roundup(x, y)	((((x) + ((y) - 1)) / (y)) * (y))
+
+#ifndef NET_SKB_PAD
+#define NET_SKB_PAD	16
+#endif
+
+static inline struct sk_buff *
+netdev_alloc_skb(struct net_device *dev, unsigned int length)
+{
+	struct sk_buff *skb;
+
+	skb = alloc_skb(length + NET_SKB_PAD, GFP_ATOMIC);
+	if (likely(skb)) {
+		skb_reserve(skb, NET_SKB_PAD);
+		skb->dev = dev;
+	}
+	return skb;
+}
 
 struct hwrng
 {
