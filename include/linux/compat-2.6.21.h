@@ -3,15 +3,15 @@
 
 #include <linux/version.h>
 
-/* Compat work for 2.6.21 */
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,21))
 
-#include <linux/sysctl.h>
-
+/* <linux/sysctl.h> */
+#ifdef _LINUX_SYSCTL_H
 #define register_sysctl_table(table)				\
 	({							\
 		register_sysctl_table((table), 0);		\
 	})
+#endif
 
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,21)) */
 
