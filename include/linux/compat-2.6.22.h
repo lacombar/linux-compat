@@ -80,9 +80,18 @@ static inline void skb_copy_from_linear_data_offset(const struct sk_buff *skb,
 	memcpy(to, skb->data + offset, len);
 }
 
-#define __maybe_unused	__attribute__((unused))
+#if defined(__GNUC__)
+#define __maybe_unused		__attribute__((unused))
+#define uninitialized_var(x)	x = x
+#endif
 
-#define uninitialized_var(x) x = x
+#ifndef __maybe_unused
+#define __maybe_unused		/* unimplemented */
+#endif
+
+#ifndef uninitialized_var
+#define uninitialized_var(x)	x
+#endif
 
 /* This will lead to very weird behaviour... */
 #define NLA_BINARY NLA_STRING
