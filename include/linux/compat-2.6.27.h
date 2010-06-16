@@ -86,9 +86,6 @@ bool pci_pme_capable(struct pci_dev *dev, pci_power_t state);
 #define dma_mapping_error(pdev, dma_addr) dma_mapping_error(dma_addr)
 #define pci_dma_mapping_error(pdev, dma_addr) dma_mapping_error(pdev, dma_addr)
 
-/* This is from include/linux/ieee80211.h */
-#define IEEE80211_HT_CAP_DSSSCCK40		0x1000
-
 /* New link list changes added as of 2.6.27, needed for ath9k */
 
 static inline void __list_cut_position(struct list_head *list,

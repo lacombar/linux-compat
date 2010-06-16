@@ -234,6 +234,9 @@ extern void skb_add_rx_frag(struct sk_buff *skb, int i, struct page *page,
 extern int n_tty_ioctl_helper(struct tty_struct *tty, struct file *file,
 		       unsigned int cmd, unsigned long arg);
 
+/* This is from include/linux/ieee80211.h */
+#define IEEE80211_HT_CAP_DSSSCCK40		0x1000
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28)) */
 
 #endif /* LINUX_26_28_COMPAT_H */
