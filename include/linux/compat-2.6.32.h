@@ -59,7 +59,6 @@ static inline void flush_delayed_work(struct delayed_work *dwork)
 
 #define SET_NETDEV_DEVTYPE(netdev, type)
 
-#ifdef __KERNEL__
 /* Driver transmit return codes */
 enum netdev_tx {
 	BACKPORT_NETDEV_TX_OK = NETDEV_TX_OK,       /* driver took care of packet */
@@ -67,7 +66,6 @@ enum netdev_tx {
 	BACKPORT_NETDEV_TX_LOCKED = NETDEV_TX_LOCKED,  /* driver tx lock was already taken */
 };
 typedef enum netdev_tx netdev_tx_t;
-#endif /* __KERNEL__ */
 
 /*
  * dev_pm_ops is only available on kernels >= 2.6.29, for

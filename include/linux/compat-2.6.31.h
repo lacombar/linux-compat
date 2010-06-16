@@ -50,13 +50,9 @@
 #endif
 #endif
 
-#ifndef NETDEV_PRE_UP
 #define NETDEV_PRE_UP		0x000D
-#endif
 
-#ifndef SDIO_DEVICE_ID_MARVELL_8688WLAN
 #define SDIO_DEVICE_ID_MARVELL_8688WLAN		0x9104
-#endif
 
 /*
  * kmemleak was introduced on 2.6.31, since older kernels do not have
