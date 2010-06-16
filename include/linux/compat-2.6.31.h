@@ -5,13 +5,8 @@
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31))
 
-#include <linux/skbuff.h>
-#include <linux/workqueue.h>
-#include <linux/interrupt.h>
-#include <net/dst.h>
-#include <net/genetlink.h>
-#include <linux/ethtool.h>
-
+/* <linux/rfkill.h> */
+#ifdef __RFKILL_H
 /*
  * These macros allow us to backport rfkill without any
  * changes on cfg80211 through compat.diff. Note that this
@@ -49,11 +44,20 @@
 #define ERFKILL		134	/* Operation not possible due to RF-kill */
 #endif
 #endif
+#endif /* __RFKILL_H */
 
+/* <linux/notifier.h> */
+#ifdef _LINUX_NOTIFIER_H
 #define NETDEV_PRE_UP		0x000D
+#endif
 
+/* <linux/mmc/sdio_ids.h> */
+#ifdef MMC_SDIO_IDS_H
 #define SDIO_DEVICE_ID_MARVELL_8688WLAN		0x9104
+#endif
 
+/* <linux/kmemleak.h> */
+#ifdef __KMEMLEAK_H
 /*
  * kmemleak was introduced on 2.6.31, since older kernels do not have
  * we simply ignore its tuning.
@@ -72,7 +76,10 @@ static inline void kmemleak_no_scan(const void *ptr)
 {
 	return;
 }
+#endif
 
+/* <net/dst.h> */
+#ifdef _NET_DST_H
 /*
  * Added via adf30907d63893e4208dfe3f5c88ae12bc2f25d5
  *
@@ -84,7 +91,10 @@ static inline void skb_dst_drop(struct sk_buff *skb)
 	dst_release(skb->dst);
 	skb->dst = NULL;
 }
+#endif
 
+/* <linux/skbuff.h> */
+#ifdef _LINUX_SKBUFF_H
 static inline struct dst_entry *skb_dst(const struct sk_buff *skb)
 {
 	return (struct dst_entry *)skb->dst;
@@ -99,7 +109,10 @@ static inline struct rtable *skb_rtable(const struct sk_buff *skb)
 {
 	return (struct rtable *)skb_dst(skb);
 }
+#endif /* _LINUX_SKBUFF_H */
 
+/* <linux/interrupt.h> */
+#ifdef _LINUX_INTERRUPT_H
 /* Backport threaded IRQ support */
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,19))
 typedef irqreturn_t (*irq_handler_t)(int, void *, struct pt_regs *);
@@ -212,6 +225,7 @@ void compat_synchronize_threaded_irq(struct compat_threaded_irq *comp)
 	synchronize_irq(comp->irq);
 	cancel_work_sync(&comp->work);
 }
+<<<<<<< HEAD
 
 /**
  * list_entry_rcu - get the struct for this entry
@@ -224,6 +238,9 @@ void compat_synchronize_threaded_irq(struct compat_threaded_irq *comp)
  */
 #define list_entry_rcu(ptr, type, member) \
 	container_of(rcu_dereference(ptr), type, member)
+=======
+#endif /* _LINUX_INTERRUPT_H */
+>>>>>>> b961170... compat/2.6.31: limit namespace pollution
 
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)) */
 
