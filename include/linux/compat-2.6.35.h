@@ -11,7 +11,6 @@
 /* added on linux/kernel.h */
 #define USHRT_MAX      ((u16)(~0U))
 #define SHRT_MAX       ((s16)(USHRT_MAX>>1))
-#define SHRT_MIN       ((s16)(-SHRT_MAX - 1))
 
 #define  SDIO_BUS_ECSI		0x20	/* Enable continuous SPI interrupt */
 #define  SDIO_BUS_SCSI		0x40	/* Support continuous SPI interrupt */
