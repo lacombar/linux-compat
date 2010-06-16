@@ -87,13 +87,6 @@ int pcmcia_loop_tuple(struct pcmcia_device *p_dev, cisdata_t code,
 
 #endif /* CONFIG_PCMCIA */
 
-/* loop over CIS entries */
-int pccard_loop_tuple(struct pcmcia_socket *s, unsigned int function,
-		      cisdata_t code, cisparse_t *parse, void *priv_data,
-		      int (*loop_tuple) (tuple_t *tuple,
-					 cisparse_t *parse,
-					 void *priv_data));
-
 #endif /* CONFIG_PCCARD */
 
 /* Backport for kfifo
