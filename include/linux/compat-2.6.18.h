@@ -6,16 +6,13 @@
 /* Compat work for 2.6.18 */
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18))
 
-#include <linux/gfp.h>
-#include <linux/netdevice.h>
-#include <linux/skbuff.h>
-
+/* <linux/kernel.h> */
+#ifdef _LINUX_KERNEL_H
 #define roundup(x, y)	((((x) + ((y) - 1)) / (y)) * (y))
-
-#ifndef NET_SKB_PAD
-#define NET_SKB_PAD	16
 #endif
 
+/* <linux/skbuff.h> */
+#ifdef _LINUX_SKBUFF_H
 static inline struct sk_buff *
 netdev_alloc_skb(struct net_device *dev, unsigned int length)
 {
@@ -28,6 +25,7 @@ netdev_alloc_skb(struct net_device *dev, unsigned int length)
 	}
 	return skb;
 }
+#endif
 
 struct hwrng
 {
