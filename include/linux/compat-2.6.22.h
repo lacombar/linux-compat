@@ -96,15 +96,6 @@ static inline void skb_copy_from_linear_data_offset(const struct sk_buff *skb,
 /* This will lead to very weird behaviour... */
 #define NLA_BINARY NLA_STRING
 
-static inline int pci_set_mwi(struct pci_dev *dev)
-{
-	return -ENOSYS;
-}
-
-static inline void pci_clear_mwi(struct pci_dev *dev)
-{
-}
-
 #define list_first_entry(ptr, type, member) \
         list_entry((ptr)->next, type, member)
 
