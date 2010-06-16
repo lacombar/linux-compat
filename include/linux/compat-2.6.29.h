@@ -242,12 +242,10 @@ extern void usb_unpoison_anchored_urbs(struct usb_anchor *anchor);
 #endif /* CONFIG_USB */
 #endif
 
-#define DIV_ROUND_CLOSEST(x, divisor)(			\
-{							\
+#define DIV_ROUND_CLOSEST(x, divisor)	({		\
 	typeof(divisor) __divisor = divisor;		\
 	(((x) + ((__divisor) / 2)) / (__divisor));	\
-}							\
-)
+})
 
 extern int eth_mac_addr(struct net_device *dev, void *p);
 extern int eth_change_mtu(struct net_device *dev, int new_mtu);
