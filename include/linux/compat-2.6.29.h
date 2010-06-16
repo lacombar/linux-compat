@@ -11,8 +11,8 @@
 #endif
 
 /*
- * I kow this looks odd.. but 2.6.32 added the netdev_tx_t
- * and we backport that there so inlcude that header first
+ * I know this looks odd.. but 2.6.32 added the netdev_tx_t
+ * and we backport that there so include that header first
  * as we need it for the netdev ops.
  */
 #include <linux/compat-2.6.32.h>
