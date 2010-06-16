@@ -99,6 +99,30 @@ struct dev_pm_ops name = { \
 
 #define dev_to_sdio_func(d)	container_of(d, struct sdio_func, dev)
 
+#define proc_dostring(table, write, buff, lenp, ppos) \
+	    ({ proc_dostring(table, write, NULL, buff, lenp, ppos); })
+
+#define proc_dointvec(table, write, buff, lenp, ppos) \
+	    ({ proc_dointvec(table, write, NULL, buff, lenp, ppos); })
+
+#define proc_dointvec_minmax(table, write, buff, lenp, ppos) \
+	    ({ proc_dointvec_minmax(table, write, NULL, buff, lenp, ppos); })
+
+#define proc_dointvec_jiffies(table, write, buff, lenp, ppos) \
+	    ({ proc_dointvec_jiffies(table, write, NULL, buff, lenp, ppos); })
+
+#define proc_dointvec_userhz_jiffies(table, write, buff, lenp, ppos) \
+	    ({ proc_dointvec_userhz_jiffies(table, write, NULL, buff, lenp, ppos); })
+
+#define proc_dointvec_ms_jiffies(table, write, buff, lenp, ppos) \
+	    ({ proc_dointvec_ms_jiffies(table, write, NULL, buff, lenp, ppos); })
+
+#define proc_doulongvec_minmax(table, write, buff, lenp, ppos) \
+	    ({ proc_doulongvec_minmax(table, write, NULL, buff, lenp, ppos); })
+
+#define proc_doulongvec_ms_jiffies_minmax(table, write, buff, lenp, ppos) \
+	    ({ proc_doulongvec_ms_jiffies_minmax(table, write, NULL, buff, lenp, ppos); })
+
 #define lockdep_assert_held(l)			do { } while (0)
 
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,32)) */
