@@ -5,20 +5,14 @@
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,33))
 
-#include <linux/skbuff.h>
-#if defined(CONFIG_PCCARD) || defined(CONFIG_PCCARD_MODULE)
-struct pcmcia_socket;
-#include <pcmcia/cs_types.h>
-#include <pcmcia/cistpl.h>
-#include <pcmcia/cs.h>
-#include <pcmcia/ds.h>
-#endif
-#include <linux/kfifo.h>
-#include <linux/firmware.h>
-
+/* <linux/kernel.h> */
+#ifdef _LINUX_KERNEL_H
 #define BUILD_BUG_ON_NOT_POWER_OF_2(n)			\
 	BUILD_BUG_ON((n) == 0 || (((n) & ((n) - 1)) != 0))
+#endif
 
+/* <linux/firmware.h> */
+#ifdef _LINUX_FIRMWARE_H
 #define release_firmware compat_release_firmware
 #define request_firmware compat_request_firmware
 #define request_firmware_nowait compat_request_firmware_nowait
@@ -51,15 +45,26 @@ static inline void compat_release_firmware(const struct firmware *fw)
 {
 }
 #endif
+#endif /* _LINUX_FIRMWARE_H */
 
+/* <linux/input.h> */
+#ifdef _INPUT_H	
 #define KEY_RFKILL		247	/* Key that controls all radios */
+#endif
 
+/* <linux/if.h> */
+#ifdef _LINUX_IF_H
 #define IFF_DONT_BRIDGE 0x800		/* disallow bridging this ether dev */
-/* source: include/linux/if.h */
+#endif
 
+/* <linux/notifier.h> */
+#ifdef _LINUX_NOTIFIER_H
 /* this will never happen on older kernels */
 #define NETDEV_POST_INIT 0xffff
+#endif
 
+/* <linux/netdevice.h> */
+#ifdef _LINUX_NETDEVICE_H
 static inline struct sk_buff *netdev_alloc_skb_ip_align(struct net_device *dev,
                 unsigned int length)
 {
@@ -69,11 +74,14 @@ static inline struct sk_buff *netdev_alloc_skb_ip_align(struct net_device *dev,
 		skb_reserve(skb, NET_IP_ALIGN);
 	return skb;
 }
+#endif
 
 #if defined(CONFIG_PCCARD) || defined(CONFIG_PCCARD_MODULE)
 
 #if defined(CONFIG_PCMCIA) || defined(CONFIG_PCMCIA_MODULE)
 
+/* <pcmcia/ds.h> */
+#ifdef _LINUX_DS_H
 #define pcmcia_request_window(a, b, c) pcmcia_request_window(&a, b, c)
 
 #define pcmcia_map_mem_page(a, b, c) pcmcia_map_mem_page(b, c)
@@ -84,17 +92,21 @@ int pcmcia_loop_tuple(struct pcmcia_device *p_dev, cisdata_t code,
 					 tuple_t *tuple,
 					 void *priv_data),
 		      void *priv_data);
+#endif
 
 #endif /* CONFIG_PCMCIA */
 
 #endif /* CONFIG_PCCARD */
 
+/* <linux/kfifo.h> */
+#ifdef _LINUX_KFIFO_H
 /* Backport for kfifo
  * kfifo_alloc and kfifo_free must be backported manually 
  */
 #define kfifo_in(a, b, c) __kfifo_put(*a, (unsigned char *)b, c)
 #define kfifo_out(a, b, c) __kfifo_get(*a, (unsigned char *)b, c)
 #define kfifo_len(a) __kfifo_len(*a)
+#endif
 
 /**
  * kfifo_is_empty - returns true if the fifo is empty
