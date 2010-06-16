@@ -277,6 +277,26 @@ static inline struct net *read_pnet(struct net * const *pnet)
 
 #endif
 
+#define TP_PROTO(args...)	args
+#define TP_ARGS(args...)		args
+
+#define DECLARE_TRACE(name, proto, args)				\
+	static inline void _do_trace_##name(struct tracepoint *tp, proto) \
+	{ }								\
+	static inline void trace_##name(proto)				\
+	{ }								\
+	static inline int register_trace_##name(void (*probe)(proto))	\
+	{								\
+		return -ENOSYS;						\
+	}								\
+	static inline int unregister_trace_##name(void (*probe)(proto))	\
+	{								\
+		return -ENOSYS;						\
+	}
+
+#define EXPORT_TRACEPOINT_SYMBOL_GPL(name)
+#define EXPORT_TRACEPOINT_SYMBOL(name)
+
 extern int		init_dummy_netdev(struct net_device *dev);
 
 #else

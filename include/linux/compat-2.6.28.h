@@ -192,30 +192,6 @@ static inline void skb_queue_splice_tail(const struct sk_buff_head *list,
 		head->qlen += list->qlen;
 	}
 }
-
-#ifndef DECLARE_TRACE
-
-#define TP_PROTO(args...)	args
-#define TP_ARGS(args...)		args
-
-#define DECLARE_TRACE(name, proto, args)				\
-	static inline void _do_trace_##name(struct tracepoint *tp, proto) \
-	{ }								\
-	static inline void trace_##name(proto)				\
-	{ }								\
-	static inline int register_trace_##name(void (*probe)(proto))	\
-	{								\
-		return -ENOSYS;						\
-	}								\
-	static inline int unregister_trace_##name(void (*probe)(proto))	\
-	{								\
-		return -ENOSYS;						\
-	}
-
-#define EXPORT_TRACEPOINT_SYMBOL_GPL(name)
-#define EXPORT_TRACEPOINT_SYMBOL(name)
-
-
 #endif
 
 /* openSuse includes round_jiffies_up in it's kernel 2.6.27.
