@@ -5,16 +5,13 @@
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34))
 
-#include <linux/netdevice.h>
-#include <linux/usb.h>
-
+/* <linux/netdevice.h> */
+#ifdef _LINUX_NETDEVICE_H
 #define netdev_mc_count(dev) ((dev)->mc_count)
 #define netdev_mc_empty(dev) (netdev_mc_count(dev) == 0)
 
 #define netdev_for_each_mc_addr(mclist, dev) \
 	for (mclist = dev->mc_list; mclist; mclist = mclist->next)
-/* source: include/linux/netdevice.h */
-
 
 /* Logging, debugging and troubleshooting/diagnostic helpers. */
 
@@ -138,9 +135,10 @@ do {								\
 	0;							\
 })
 #endif
-/* source: include/linux/netdevice.h */
+#endif /* _LINUX_NETDEVICE_H */
 
-
+/* <linux/device.h> */
+#ifdef _DEVICE_H_
 static inline void device_lock(struct device *dev)
 {
 #if defined(CONFIG_PREEMPT_RT) || defined(CONFIG_PREEMPT_DESKTOP)
@@ -167,16 +165,25 @@ static inline void device_unlock(struct device *dev)
 	up(&dev->sem);
 #endif
 }
+#endif
 
+/* <pcmcia/device_id.h> */
+#ifdef _LINUX_PCMCIA_DEVICE_ID_H
 #if defined(CONFIG_PCMCIA) || defined(CONFIG_PCMCIA_MODULE)
 #define PCMCIA_DEVICE_PROD_ID3(v3, vh3) { \
 	.match_flags = PCMCIA_DEV_ID_MATCH_PROD_ID3, \
 	.prod_id = { NULL, NULL, (v3), NULL },  \
 	.prod_id_hash = { 0, 0, (vh3), 0 }, }
 #endif
+#endif
 
+/* <linux/rcupdate.h> */
+#ifdef __LINUX_RCUPDATE_H
 #define rcu_dereference_check(p, c) rcu_dereference(p)
+#endif
 
+/* <linux/sysfs.h> */
+#ifdef _SYSFS_H_
 /**
  *	sysfs_attr_init - initialize a dynamically allocated sysfs attribute
  *	@attr: struct attribute to initialize
@@ -209,10 +216,16 @@ do {							\
  *	added to sysfs if you don't have this.
  */
 #define sysfs_bin_attr_init(bin_attr) sysfs_attr_init(&(bin_attr)->attr)
+#endif
 
+/* <linux/usb.h> */
+#ifdef __LINUX_USB_H
 #define usb_alloc_coherent(dev, size, mem_flags, dma) usb_buffer_alloc(dev, size, mem_flags, dma)
 #define usb_free_coherent(dev, size, addr, dma) usb_buffer_free(dev, size, addr, dma)
+#endif
 
+/* <linux/dma-mapping.h> */
+#ifdef _LINUX_DMA_MAPPING_H
 #ifdef CONFIG_NEED_DMA_MAP_STATE
 #define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)        dma_addr_t ADDR_NAME
 #define DEFINE_DMA_UNMAP_LEN(LEN_NAME)          __u32 LEN_NAME
@@ -236,6 +249,7 @@ static inline int dma_set_coherent_mask(struct device *dev, u64 mask)
 	dev->coherent_dma_mask = mask;
 	return 0;
 }
+#endif
 
 /* USB autosuspend and autoresume */
 static inline int usb_enable_autosuspend(struct usb_device *udev)

@@ -225,8 +225,10 @@ void compat_synchronize_threaded_irq(struct compat_threaded_irq *comp)
 	synchronize_irq(comp->irq);
 	cancel_work_sync(&comp->work);
 }
-<<<<<<< HEAD
+#endif /* _LINUX_INTERRUPT_H */
 
+/* <linux/rculist.h> */
+#ifdef _LINUX_RCULIST_H
 /**
  * list_entry_rcu - get the struct for this entry
  * @ptr:        the &struct list_head pointer.
@@ -238,9 +240,7 @@ void compat_synchronize_threaded_irq(struct compat_threaded_irq *comp)
  */
 #define list_entry_rcu(ptr, type, member) \
 	container_of(rcu_dereference(ptr), type, member)
-=======
-#endif /* _LINUX_INTERRUPT_H */
->>>>>>> b961170... compat/2.6.31: limit namespace pollution
+#endif
 
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,31)) */
 
