@@ -2,7 +2,10 @@
 #define LINUX_26_29_COMPAT_H
 
 #include <linux/version.h>
+
 #include <linux/netdevice.h>
+
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29))
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19))
 #include <linux/if_link.h>
 #endif
@@ -13,8 +16,6 @@
  * as we need it for the netdev ops.
  */
 #include <linux/compat-2.6.32.h>
-
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29))
 
 #include <linux/skbuff.h>
 #include <linux/usb.h>
