@@ -39,11 +39,6 @@
 #define SW_RFKILL_ALL           0x03  /* rfkill master switch, type "any"
 					 set = radio enabled */
 
-/* From kernel.h */
-#define USHORT_MAX      ((u16)(~0U))
-#define SHORT_MAX       ((s16)(USHORT_MAX>>1))
-#define SHORT_MIN       (-SHORT_MAX - 1)
-
 extern int dev_set_name(struct device *dev, const char *name, ...)
 			__attribute__((format(printf, 2, 3)));
 
