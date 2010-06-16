@@ -5,33 +5,27 @@
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,27))
 
-#include <linux/debugfs.h>
-#include <linux/list.h>
-#include <linux/pci.h>
-#include <linux/dma-mapping.h>
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24))
-#include <linux/mmc/sdio.h>
-#include <linux/mmc/sdio_func.h>
-#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24) */
-#include <linux/netdevice.h>
-#include <linux/workqueue.h>
-#include <net/iw_handler.h>
-#include <asm-generic/bug.h>
-#include <linux/wireless.h>
-#include <linux/skbuff.h>
-#include <net/sch_generic.h>
-
+/* <linux/pci_regs.h> */
+#ifdef LINUX_PCI_REGS_H
 #define PCI_PM_CAP_PME_SHIFT	11
+#endif
 
 /* I can't find a more suitable replacement... */
+#ifndef flush_work
 #define flush_work(work) cancel_work_sync(work)
+#endif
 
+/* <linux/firmware.h> */
+#ifdef _LINUX_FIRMWARE_H
 struct builtin_fw {
 	char *name;
 	void *data;
 	unsigned long size;
 };
+#endif
 
+/* <linux/netdevice.h> */
+#ifdef _LINUX_NETDEVICE_H
 /*
  * On older kernels we do not have net_device Multi Queue support, but
  * since we no longer use MQ on mac80211 we can simply use the 0 queue.
@@ -51,20 +45,29 @@ static inline void netif_tx_stop_all_queues(struct net_device *dev)
 	netif_stop_queue(dev);
 }
 
-/* Are all TX queues of the device empty?  */
-static inline bool qdisc_all_tx_empty(const struct net_device *dev)
-{
-	return skb_queue_empty(&dev->qdisc->q);
-}
-
-bool pci_pme_capable(struct pci_dev *dev, pci_power_t state);
-
 /*
  * The net_device has a spin_lock on newer kernels, on older kernels we're out of luck
  */
 #define netif_addr_lock_bh(dev)
 #define netif_addr_unlock_bh(dev)
+#endif
 
+/* <net/sch_generic.h> */
+#ifdef __NET_SCHED_GENERIC_H
+/* Are all TX queues of the device empty?  */
+static inline bool qdisc_all_tx_empty(const struct net_device *dev)
+{
+	return skb_queue_empty(&dev->qdisc->q);
+}
+#endif
+
+/* <linux/pci.h> */
+#ifdef LINUX_PCI_H
+bool pci_pme_capable(struct pci_dev *dev, pci_power_t state);
+#endif
+
+/* <asm-generic/bug.h> */
+#ifdef _ASM_GENERIC_BUG_H 
 /*
  * To port this properly we'd have to port warn_slowpath_null(),
  * which I'm lazy to do so just do a regular print for now. If you
@@ -81,13 +84,17 @@ bool pci_pme_capable(struct pci_dev *dev, pci_power_t state);
 	unlikely(__ret_warn_on);					\
 })
 #endif
+#endif /* _ASM_GENERIC_BUG_H */
 
+/* <linux/dma-mapping.h> */
+#ifdef _LINUX_DMA_MAPPING_H
 /* On 2.6.27 a second argument was added, on older kernels we ignore it */
 #define dma_mapping_error(pdev, dma_addr) dma_mapping_error(dma_addr)
 #define pci_dma_mapping_error(pdev, dma_addr) dma_mapping_error(pdev, dma_addr)
+#endif
 
-/* New link list changes added as of 2.6.27, needed for ath9k */
-
+/* <linux/list.h> */
+#ifdef _LINUX_LIST_H
 static inline void __list_cut_position(struct list_head *list,
 		struct list_head *head, struct list_head *entry)
 {
@@ -172,12 +179,18 @@ static inline void list_splice_tail_init(struct list_head *list,
 		INIT_LIST_HEAD(list);
 	}
 }
+#endif /* _LINUX_LIST_H */
 
+/* <linux/mmc/core.h> */
+#ifdef LINUX_MMC_CORE_H
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24))
 extern unsigned int mmc_align_data_size(struct mmc_card *, unsigned int);
 extern unsigned int sdio_align_size(struct sdio_func *func, unsigned int sz);
 #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24) */
+#endif
 
+/* <net/iw_handler.h> */
+#ifdef _IW_HANDLER_H
 #define iwe_stream_add_value(info, event, value, ends, iwe, event_len) iwe_stream_add_value(event, value, ends, iwe, event_len)
 #define iwe_stream_add_point(info, stream, ends, iwe, extra) iwe_stream_add_point(stream, ends, iwe, extra)
 #define iwe_stream_add_event(info, stream, ends, iwe, event_len) iwe_stream_add_event(stream, ends, iwe, event_len)
@@ -193,6 +206,7 @@ static inline int iwe_stream_lcp_len(struct iw_request_info *info)
 #endif
 	return IW_EV_LCP_LEN;
 }
+#endif /* _IW_HANDLER_H */
 
 #ifdef CONFIG_ARM
 
@@ -218,13 +232,18 @@ static inline void dma_sync_single_range_for_device(struct device *dev,
 
 #endif /* arm */
 
+/* <linux/debugfs.h> */
+#ifdef _DEBUGFS_H_
 #if defined(CONFIG_DEBUG_FS)
 void debugfs_remove_recursive(struct dentry *dentry);
 #else
 static inline void debugfs_remove_recursive(struct dentry *dentry)
 { }
 #endif
+#endif
 
+/* <linux/device.h> */
+#ifdef _DEVICE_H_
 #define device_create(cls, parent, devt, drvdata, fmt, ...)		\
 ({									\
 	struct device *_dev;						\
@@ -232,6 +251,7 @@ static inline void debugfs_remove_recursive(struct dentry *dentry)
 	dev_set_drvdata(_dev, drvdata);					\
 	_dev;								\
 })
+#endif
 
 #define dev_name(dev) dev_name((struct device *)dev)
 
