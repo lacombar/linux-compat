@@ -5,16 +5,15 @@
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28))
 
-#include <linux/skbuff.h>
-#include <linux/if_ether.h>
-#include <linux/usb.h>
-
+/* <linux/if_ether.h> */
+#ifdef _LINUX_IF_ETHER_H
 #ifndef ETH_P_PAE
 #define ETH_P_PAE 0x888E      /* Port Access Entity (IEEE 802.1X) */
 #endif
+#endif
 
-#include <linux/pci.h>
-
+/* <asm-generic/bug.h> */
+#ifdef _ASM_GENERIC_BUG_H 
 #ifndef WARN_ONCE
 #define WARN_ONCE(condition, format...) ({                      \
 	static int __warned;                                    \
@@ -25,19 +24,18 @@
 			__warned = 1;                           \
 	unlikely(__ret_warn_once);                              \
 })
-#endif /* From include/asm-generic/bug.h */
+#endif
+#endif
 
+/* <pcmcia/ds.h> */
+#ifdef _LINUX_DS_H
 #if defined(CONFIG_PCMCIA) || defined(CONFIG_PCMCIA_MODULE)
 
-#include <pcmcia/cs_types.h>
-#include <pcmcia/cs.h>
-#include <pcmcia/cistpl.h>
 #ifdef pcmcia_parse_tuple
 #undef pcmcia_parse_tuple
 #define pcmcia_parse_tuple(tuple, parse) pccard_parse_tuple(tuple, parse)
 #endif
 
-/* From : include/pcmcia/ds.h */
 /* loop CIS entries for valid configuration */
 int pcmcia_loop_config(struct pcmcia_device *p_dev,
 		       int	(*conf_check)	(struct pcmcia_device *p_dev,
@@ -48,7 +46,10 @@ int pcmcia_loop_config(struct pcmcia_device *p_dev,
 		       void *priv_data);
 
 #endif /* CONFIG_PCMCIA */
+#endif
 
+/* <linux/usb.h> */
+#ifdef __LINUX_USB_H
 /* USB anchors were added as of 2.6.23 */
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,23))
 
@@ -65,10 +66,15 @@ extern void usb_poison_anchored_urbs(struct usb_anchor *anchor);
 extern int usb_anchor_empty(struct usb_anchor *anchor);
 #endif /* CONFIG_USB */
 #endif
+#endif /* __LINUX_USB_H */
 
-
+/* <linux/pci.h> */
+#ifdef LINUX_PCI_H
 void __iomem *pci_ioremap_bar(struct pci_dev *pdev, int bar);
+#endif
 
+/* <linux/skbuff.h> */
+#ifdef _LINUX_SKBUFF_H
 /**
  *	skb_queue_is_last - check if skb is the last entry in the queue
  *	@list: queue head
@@ -192,26 +198,37 @@ static inline void skb_queue_splice_tail(const struct sk_buff_head *list,
 		head->qlen += list->qlen;
 	}
 }
-#endif
 
+extern void skb_add_rx_frag(struct sk_buff *skb, int i, struct page *page,
+			    int off, int size);
+#endif /* _LINUX_SKBUFF_H */
+
+/* <linux/timer.h> */
+#ifdef _LINUX_TIMER_H
 /* openSuse includes round_jiffies_up in it's kernel 2.6.27.
  * This is needed to prevent conflicts with the openSuse definition.
  */
 #define round_jiffies_up backport_round_jiffies_up
 
 unsigned long round_jiffies_up(unsigned long j);
+#endif
 
-extern void skb_add_rx_frag(struct sk_buff *skb, int i, struct page *page,
-			    int off, int size);
-
+/* <linux/wait.h> */
+#ifdef _LINUX_WAIT_H	
 #define wake_up_interruptible_poll(x, m)			\
 	__wake_up(x, TASK_INTERRUPTIBLE, 1, (void *) (m))
+#endif
 
+/* linux/tty.h */
+#ifdef _LINUX_TTY_H	
 extern int n_tty_ioctl_helper(struct tty_struct *tty, struct file *file,
 		       unsigned int cmd, unsigned long arg);
+#endif
 
-/* This is from include/linux/ieee80211.h */
+/* <linux/ieee80211.h> */
+#ifdef LINUX_IEEE80211_H
 #define IEEE80211_HT_CAP_DSSSCCK40		0x1000
+#endif
 
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28)) */
 
