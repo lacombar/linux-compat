@@ -3,34 +3,36 @@
 
 #include <linux/version.h>
 
-/* Compat work for 2.6.21, 2.6.22 and 2.6.23 */
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24))
 
-#include <asm/atomic.h>
-#include <linux/netdevice.h>
-#include <linux/skbuff.h>
-#include <linux/usb.h>
-#include <linux/types.h>
-#include <linux/list.h>
-#include <linux/scatterlist.h>
-#include <net/sock.h>
-
+/* <linux/input.h> */
+#ifdef _INPUT_H
 #define KEY_BLUETOOTH	237
 #define KEY_WLAN	238
 #define KEY_UWB		239
+#endif
 
+/* <linux/dma-mapping.h> */
+#ifdef _LINUX_DMA_MAPPING_H
 #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+#endif
 
-/* Added on 2.6.24 in include/linux/types.h by Al viro on commit 142956af */
+/* <linux/types.h> */
+#ifdef _LINUX_TYPES_H
 typedef unsigned long               uintptr_t;
+#endif
 
-/* From include/linux/net.h */
+/* <linux/net.h> */
+#ifdef _LINUX_NET_H
 enum sock_shutdown_cmd {
 	SHUT_RD		= 0,
 	SHUT_WR		= 1,
 	SHUT_RDWR	= 2,
 };
+#endif
 
+/* <linux/skbuff.h> */
+#ifdef _LINUX_SKBUFF_H
 #if (LINUX_VERSION_CODE == KERNEL_VERSION(2,6,23)) /* Local check */
 /* Added as of 2.6.24 in include/linux/skbuff.h.
  *
@@ -50,7 +52,10 @@ static inline u16 skb_get_queue_mapping(struct sk_buff *skb)
 #endif
 }
 #endif /* Local 2.6.23 check */
+#endif /* _LINUX_SKBUFF_H */
 
+/* <linux/netdevice.h> */
+#ifdef _LINUX_NETDEVICE_H
 /* On older kernels we handle this a bit differently, so we yield to that
  * code for its implementation in mq_compat.h as we want to make
  * use of the internal mac80211 __ieee80211_queue_stopped() which itself
@@ -82,6 +87,26 @@ static inline int __netif_subqueue_stopped(const struct net_device *dev,
 
 #endif /* Local 2.6.23 check */
 
+struct header_ops {
+	int     (*create) (struct sk_buff *skb, struct net_device *dev,
+		unsigned short type, void *daddr,
+		void *saddr, unsigned len);
+	int     (*parse)(const struct sk_buff *skb, unsigned char *haddr);
+	int     (*rebuild)(struct sk_buff *skb);
+	#define HAVE_HEADER_CACHE
+	int     (*cache)(struct neighbour *neigh, struct hh_cache *hh);
+	void    (*cache_update)(struct hh_cache *hh,
+		struct net_device *dev,
+		unsigned char *haddr);
+};
+
+/* Namespace stuff */
+#define dev_get_by_index(a, b)		dev_get_by_index(b)
+#define __dev_get_by_index(a, b)	__dev_get_by_index(b)
+#endif /* _LINUX_NETDEVICE_H */
+
+/* <linux/slab.h> */
+#ifdef _LINUX_SLAB_H
 /*
  * Force link bug if constructor is used, can't be done compatibly
  * because constructor arguments were swapped since then!
@@ -107,9 +132,10 @@ extern void __incompatible_kmem_cache_create(void);
 				  (flags), NULL);		\
 	})
 #endif
+#endif /* _LINUX_SLAB_H */
 
-/* From include/linux/mod_devicetable.h */
-
+/* <linux/mod_devicetable.h> */
+#ifdef LINUX_MOD_DEVICETABLE_H
 /* SSB core, see drivers/ssb/ */
 #ifndef SSB_DEVICE
 struct ssb_device_id {
@@ -126,14 +152,15 @@ struct ssb_device_id {
 #define SSB_ANY_ID              0xFFFF
 #define SSB_ANY_REV             0xFF
 #endif
+#endif /* LINUX_MOD_DEVICETABLE_H */
 
-
-/* Namespace stuff, introduced on 2.6.24 */
-#define dev_get_by_index(a, b)		dev_get_by_index(b)
-#define __dev_get_by_index(a, b)	__dev_get_by_index(b)
+/* <net/sock.h> */
+#ifdef _SOCK_H
 #define sk_alloc(net, fam, pri, prot)	sk_alloc(fam, pri, prot, 1)
+#endif
 
-
+/* <linux/if_ether.h> */
+#ifdef _LINUX_IF_ETHER_H
 /*
  * Display a 6 byte device address (MAC) in a readable format.
  */
@@ -149,21 +176,10 @@ extern void		eth_header_cache_update(struct hh_cache *hh, struct net_device *dev
 				unsigned char * haddr);
 extern int		eth_header_cache(struct neighbour *neigh,
 			struct hh_cache *hh);
+#endif /* _LINUX_IF_ETHER_H */
 
-/* This structure is simply not present on 2.6.22 and 2.6.23 */
-struct header_ops {
-	int     (*create) (struct sk_buff *skb, struct net_device *dev,
-		unsigned short type, void *daddr,
-		void *saddr, unsigned len);
-	int     (*parse)(const struct sk_buff *skb, unsigned char *haddr);
-	int     (*rebuild)(struct sk_buff *skb);
-	#define HAVE_HEADER_CACHE
-	int     (*cache)(struct neighbour *neigh, struct hh_cache *hh);
-	void    (*cache_update)(struct hh_cache *hh,
-		struct net_device *dev,
-		unsigned char *haddr);
-};
-
+/* <linux/scatterlist.h> */
+#ifdef _LINUX_SCATTERLIST_H
 /* net/ieee80211/ieee80211_crypt_tkip uses sg_init_table. This was added on
  * 2.6.24. CONFIG_DEBUG_SG was added in 2.6.24 as well, so lets just ignore
  * the debug stuff. Note that adding this required changes to the struct
@@ -209,7 +225,10 @@ static inline void sg_init_table(struct scatterlist *sgl, unsigned int nents)
 {
 	memset(sgl, 0, sizeof(*sgl) * nents);
 }
+#endif /* _LINUX_SCATTERLIST_H */
 
+/* <linux/usb.h> */
+#ifdef __LINUX_USB_H
 /**
  * usb_endpoint_num - get the endpoint's number
  * @epd: endpoint to be checked
@@ -220,8 +239,10 @@ static inline int usb_endpoint_num(const struct usb_endpoint_descriptor *epd)
 {
 	return epd->bEndpointAddress & USB_ENDPOINT_NUMBER_MASK;
 }
+#endif
 
 /* Helper to make struct pci_dev is_pcie compatibility code smaller */
+struct pci_dev;
 int compat_is_pcie(struct pci_dev *pdev);
 
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)) */
