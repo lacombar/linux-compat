@@ -3,22 +3,16 @@
 
 #include <linux/version.h>
 
-#include <linux/netdevice.h>
-
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29))
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19))
-#include <linux/if_link.h>
-#endif
 
+/* <linux/netdevice.h> */
+#ifdef _LINUX_NETDEVICE_H
 /*
  * I know this looks odd.. but 2.6.32 added the netdev_tx_t
  * and we backport that there so include that header first
  * as we need it for the netdev ops.
  */
 #include <linux/compat-2.6.32.h>
-
-#include <linux/skbuff.h>
-#include <linux/usb.h>
 
 /*
  * Older kernels do not have struct net_device_ops but what we can
@@ -198,6 +192,17 @@ struct net_device_ops {
 void netdev_attach_ops(struct net_device *dev,
 		       const struct net_device_ops *ops);
 
+static inline const struct net_device_stats *
+dev_get_stats(struct net_device *dev)
+{
+	return dev->get_stats(dev);
+}
+
+extern int		init_dummy_netdev(struct net_device *dev);
+#endif
+
+/* <linux/skbuff.h> */
+#ifdef _LINUX_SKBUFF_H
 /**
  *	skb_queue_is_first - check if skb is the first entry in the queue
  *	@list: queue head
@@ -228,29 +233,40 @@ static inline struct sk_buff *skb_queue_prev(const struct sk_buff_head *list,
 	BUG_ON(skb_queue_is_first(list, skb));
 	return skb->prev;
 }
+#endif
 
-
-static inline const struct net_device_stats *
-dev_get_stats(struct net_device *dev)
-{
-	return dev->get_stats(dev);
-}
-
+/* <linux/usb.h> */
+#ifdef __LINUX_USB_H
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,23))
 #if defined(CONFIG_USB) || defined(CONFIG_USB_MODULE)
 extern void usb_unpoison_anchored_urbs(struct usb_anchor *anchor);
 #endif /* CONFIG_USB */
 #endif
+#endif /* __LINUX_USB_H */
 
+/* <linux/kernel.h> */
+#ifdef _LINUX_KERNEL_H
 #define DIV_ROUND_CLOSEST(x, divisor)	({		\
 	typeof(divisor) __divisor = divisor;		\
 	(((x) + ((__divisor) / 2)) / (__divisor));	\
 })
 
+/*
+ * swap - swap value of @a and @b
+ */
+#define swap(a, b) \
+	do { typeof(a) __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
+#endif
+
+/* <linux/etherdevice.h> */
+#ifdef _LINUX_ETHERDEVICE_H
 extern int eth_mac_addr(struct net_device *dev, void *p);
 extern int eth_change_mtu(struct net_device *dev, int new_mtu);
 extern int eth_validate_addr(struct net_device *dev);
+#endif
 
+/* <net/net_namespace.h> */
+#ifdef __NET_NET_NAMESPACE_H
 #ifdef CONFIG_NET_NS
 
 static inline void write_pnet(struct net **pnet, struct net *net)
@@ -268,14 +284,11 @@ static inline struct net *read_pnet(struct net * const *pnet)
 #define write_pnet(pnet, net)	do { (void)(net);} while (0)
 #define read_pnet(pnet)		(&init_net)
 
-/*
- * swap - swap value of @a and @b
- */
-#define swap(a, b) \
-	do { typeof(a) __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
-
 #endif
+#endif /* _LINUX_ETHERDEVICE_H */
 
+/* <linux/tracepoint.h> */
+#ifdef _LINUX_TRACEPOINT_H
 #define TP_PROTO(args...)	args
 #define TP_ARGS(args...)		args
 
@@ -295,16 +308,19 @@ static inline struct net *read_pnet(struct net * const *pnet)
 
 #define EXPORT_TRACEPOINT_SYMBOL_GPL(name)
 #define EXPORT_TRACEPOINT_SYMBOL(name)
+#endif
 
-extern int		init_dummy_netdev(struct net_device *dev);
+#else /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)) */
 
-#else
-
+/* <linux/netdevice.h> */
+#ifdef _LINUX_NETDEVICE_H
 static inline void netdev_attach_ops(struct net_device *dev,
 		       const struct net_device_ops *ops)
 {
 	dev->netdev_ops = ops;
 }
+#endif
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,29)) */
 
 #endif /*  LINUX_26_29_COMPAT_H */
