@@ -3,24 +3,10 @@
 
 #include <linux/version.h>
 
-/* Compat work for 2.6.24 */
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25))
 
-#include <linux/types.h>
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,17))
-#include <linux/io.h>
-#include <linux/leds.h>
-#endif
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,18))
-#include <linux/hw_random.h>
-#endif
-#include <linux/kernel.h>
-#include <linux/netdevice.h>
-#include <linux/pm.h>
-#include <asm-generic/bug.h>
-#include <linux/pm_qos_params.h>
-#include <linux/pci.h>
-
+/* <linux/pci.h> */
+#ifdef LINUX_PCI_H
 /* The macro below uses a const upstream, this differs */
 
 /**
@@ -32,6 +18,7 @@
  */
 #define DEFINE_PCI_DEVICE_TABLE(_table) \
 	const struct pci_device_id _table[] __devinitdata
+#endif
 
 /*
  * Backport work for QoS dependencies (kernel/pm_qos_params.c)
@@ -58,6 +45,8 @@
 int compat_pm_qos_power_init(void);
 int compat_pm_qos_power_deinit(void);
 
+/* <linux/pm.h> */
+#ifdef _LINUX_PM_H
 /*
  * 2.6.25 adds PM_EVENT_HIBERNATE as well here but
  * we don't have this on <= 2.6.23)
@@ -65,31 +54,55 @@ int compat_pm_qos_power_deinit(void);
 #ifndef PM_EVENT_SLEEP /* some distribution have mucked with their own headers to add this.. */
 #define PM_EVENT_SLEEP  (PM_EVENT_SUSPEND)
 #endif
+#endif
 
+/* <linux/input.h> */
+#ifdef _INPUT_H
 /* Although we don't care about wimax this is needed for rfkill input stuff */
 #define KEY_WIMAX		246
+#endif
 
+/* <linux/pm_qos_params.h> */
+#ifdef _LINUX_PM_QOS_PARAMS_H
 /* Although pm_qos stuff is not implemented on <= 2.6.24 lets keep the define */
 #define PM_QOS_DEFAULT_VALUE -1
+#endif
 
+/* <asm-generic/bug.h> */
+#ifdef _ASM_GENERIC_BUG_H 
 #ifndef __WARN
 #define __WARN(foo) dump_stack()
 #endif
+#endif
 
+/* <linux/device.h> */
+#ifdef _DEVICE_H_
 #define dev_emerg(dev, format, arg...)          \
 	dev_printk(KERN_EMERG , dev , format , ## arg)
 #define dev_alert(dev, format, arg...)          \
 	dev_printk(KERN_ALERT , dev , format , ## arg)
 #define dev_crit(dev, format, arg...)           \
 	dev_printk(KERN_CRIT , dev , format , ## arg)
+#endif
 
+/* <linux/netdevice.h> */
+#ifdef _LINUX_NETDEVICE_H
 extern int		__dev_addr_sync(struct dev_addr_list **to, int *to_count, struct dev_addr_list **from, int *from_count);
 extern void		__dev_addr_unsync(struct dev_addr_list **to, int *to_count, struct dev_addr_list **from, int *from_count);
+#endif
 
+/* <linux/seq_file.h> */
+#ifdef _LINUX_SEQ_FILE_H
 #define seq_file_net &init_net;
+#endif
 
+/* <net/route.h> */
+#ifdef _ROUTE_H
 #define ip_route_output_key(net, rt, fl)	ip_route_output_key(rt, fl)
+#endif
 
+/* <linux/netfilter.h> */
+#ifdef __LINUX_NETFILTER_H
 enum nf_inet_hooks {
 	NF_INET_PRE_ROUTING = 0,
 	NF_INET_LOCAL_IN = 1,
@@ -98,7 +111,10 @@ enum nf_inet_hooks {
 	NF_INET_POST_ROUTING = 4,
 	NF_INET_NUMHOOKS = 5
 };
+#endif
 
+/* <linux/byteorder/generic.h> */
+#ifdef _LINUX_BYTEORDER_GENERIC_H
 /* The patch:
  * commit 8b5f6883683c91ad7e1af32b7ceeb604d68e2865
  * Author: Marcin Slusarz <marcin.slusarz@gmail.com>
@@ -142,7 +158,10 @@ static inline void be64_add_cpu(__be64 *var, u64 val)
 	u64 v = be64_to_cpu(*var);
 	*var = cpu_to_be64(v + val);
 }
+#endif /* _LINUX_BYTEORDER_GENERIC_H */
 
+/* <linux/hw_random.h> */
+#ifdef LINUX_HWRANDOM_H_
 /* 2.6.25 changes hwrng_unregister()'s behaviour by supporting
  * suspend of its parent device (the misc device, which is itself the
  * hardware random number generator). It does this by passing a parameter to
@@ -155,18 +174,25 @@ static inline void __hwrng_unregister(struct hwrng *rng, bool suspended)
 {
 	hwrng_unregister(rng);
 }
+#endif
 
+/* <linux/leds.h> */
+#ifdef __LINUX_LEDS_H_INCLUDED
 static inline void led_classdev_unregister_suspended(struct led_classdev *lcd)
 {
 	led_classdev_unregister(lcd);
 }
+#endif
 
+/* <linux/kernel.h> */
+#ifdef _LINUX_KERNEL_H
 /**
  * The following things are out of ./include/linux/kernel.h
  * The new iwlwifi driver is using them.
  */
 extern int strict_strtoul(const char *, unsigned int, unsigned long *);
 extern int strict_strtol(const char *, unsigned int, long *);
+#endif
 
 #else
 /*
