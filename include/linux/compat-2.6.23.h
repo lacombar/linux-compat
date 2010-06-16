@@ -84,10 +84,6 @@ static inline void tcf_destroy_chain_compat(struct tcf_proto **fl)
 #define da_users	dmi_users
 #define da_gusers	dmi_gusers
 
-/* dev_set_promiscuity() was moved to __dev_set_promiscuity() on 2.6.23 and
- * dev_set_promiscuity() became a wrapper. */
-#define __dev_set_promiscuity dev_set_promiscuity
-
 /* Our own 2.6.22 port on compat.c */
 extern void	dev_mc_unsync(struct net_device *to, struct net_device *from);
 extern int	dev_mc_sync(struct net_device *to, struct net_device *from);
