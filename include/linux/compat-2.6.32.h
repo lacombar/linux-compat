@@ -5,19 +5,18 @@
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,32))
 
-#include <linux/netdevice.h>
-#include <linux/compat.h>
-#include <net/iw_handler.h>
-#include <linux/workqueue.h>
-#include <net/genetlink.h>
-
+/* <linux/mmc/sdio_ids.h> */
+#ifdef MMC_SDIO_IDS_H 
 #define SDIO_VENDOR_ID_INTEL			0x0089
 #define SDIO_DEVICE_ID_INTEL_IWMC3200WIMAX	0x1402
 #define SDIO_DEVICE_ID_INTEL_IWMC3200WIFI	0x1403
 #define SDIO_DEVICE_ID_INTEL_IWMC3200TOP	0x1404
 #define SDIO_DEVICE_ID_INTEL_IWMC3200GPS	0x1405
 #define SDIO_DEVICE_ID_INTEL_IWMC3200BT		0x1406
+#endif
 
+/* <linux/workqueue.h> */
+#ifdef _LINUX_WORKQUEUE_H
 static inline void flush_delayed_work(struct delayed_work *dwork)
 {
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,21))
@@ -40,7 +39,10 @@ static inline void flush_delayed_work(struct delayed_work *dwork)
 	flush_work(&dwork->work);
 #endif
 }
+#endif
 
+/* <net/genetlink.h> */
+#ifdef __NET_GENERIC_NETLINK_H
 /*
  * struct genl_multicast_group was made netns aware through
  * patch "genetlink: make netns aware" by johannes, we just
@@ -54,7 +56,10 @@ static inline void flush_delayed_work(struct delayed_work *dwork)
 #define genlmsg_multicast_netns(a, b, c, d, e)	genlmsg_multicast(b, c, d, e)
 #define genlmsg_multicast_allns(a, b, c, d)	genlmsg_multicast(a, b, c, d)
 #define genlmsg_unicast(net, skb, pid)	genlmsg_unicast(skb, pid)
+#endif /* __NET_GENERIC_NETLINK_H */
 
+/* <linux/netdevice.h> */
+#ifdef _LINUX_NETDEVICE_H
 #define dev_change_net_namespace(a, b, c) (-EOPNOTSUPP)
 
 #define SET_NETDEV_DEVTYPE(netdev, type)
@@ -66,7 +71,10 @@ enum netdev_tx {
 	BACKPORT_NETDEV_TX_LOCKED = NETDEV_TX_LOCKED,  /* driver tx lock was already taken */
 };
 typedef enum netdev_tx netdev_tx_t;
+#endif /* _LINUX_NETDEVICE_H */
 
+/* <linux/pm.h> */
+#ifdef _LINUX_PM_H
 /*
  * dev_pm_ops is only available on kernels >= 2.6.29, for
  * older kernels we rely on reverting the work to old
@@ -89,14 +97,26 @@ struct dev_pm_ops name = { \
 #else
 #define SIMPLE_DEV_PM_OPS(name, suspend_fn, resume_fn)
 #endif /* >= 2.6.29 */
+#endif /* _LINUX_PM_H */
 
+/* <net/iw_handler.h> */
+#ifdef _IW_HANDLER_H
 #define wireless_send_event(a, b, c, d) wireless_send_event(a, b, c, (char * ) d)
+#endif
 
+/* <net/mac80211.h> */
+#ifdef MAC80211_H
 /* The export symbol in changed in compat/patches/15-symbol-export-conflicts.patch */
 #define ieee80211_rx(hw, skb) mac80211_ieee80211_rx(hw, skb)
+#endif
 
+/* <linux/mmc/sdio_func.h> */
+#ifdef MMC_SDIO_FUNC_H
 #define dev_to_sdio_func(d)	container_of(d, struct sdio_func, dev)
+#endif
 
+/* <linux/sysctl.h> */
+#ifdef _LINUX_SYSCTL_H
 #define proc_dostring(table, write, buff, lenp, ppos) \
 	    ({ proc_dostring(table, write, NULL, buff, lenp, ppos); })
 
@@ -120,8 +140,12 @@ struct dev_pm_ops name = { \
 
 #define proc_doulongvec_ms_jiffies_minmax(table, write, buff, lenp, ppos) \
 	    ({ proc_doulongvec_ms_jiffies_minmax(table, write, NULL, buff, lenp, ppos); })
+#endif
 
+/* <linux/lockdep.h> */
+#ifdef __LINUX_LOCKDEP_H
 #define lockdep_assert_held(l)			do { } while (0)
+#endif
 
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,32)) */
 
