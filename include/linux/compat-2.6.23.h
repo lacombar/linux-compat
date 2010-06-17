@@ -7,10 +7,24 @@
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,23))
 
 #include <linux/netdevice.h>
+#include <linux/notifier.h>
 #include <linux/sched.h>
 #include <linux/workqueue.h>
 #include <linux/genetlink.h>
 #include <net/sch_generic.h>
+
+/* Encapsulate (negative) errno value (in particular, NOTIFY_BAD <=> EPERM). */
+static inline int notifier_from_errno(int err)
+{
+	return NOTIFY_STOP_MASK | (NOTIFY_OK - err);
+}
+
+/* Restore (negative) errno value from notify return value. */
+static inline int notifier_to_errno(int ret)
+{
+	ret &= ~NOTIFY_STOP_MASK;
+	return ret > NOTIFY_OK ? NOTIFY_OK - ret : 0;
+}
 
 /*
  * Tell gcc if a function is cold. The compiler will assume any path
