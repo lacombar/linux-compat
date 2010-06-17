@@ -1,10 +1,10 @@
-#ifndef _COMPAT_NET_NET_NAMESPACE_H
-#define _COMPAT_NET_NET_NAMESPACE_H 1
-
 #include <linux/version.h>
 
-#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,23))
-#include_next <net/net_namespace.h>
-#endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,23)) */
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24))
 
-#endif	/* _COMPAT_NET_NET_NAMESPACE_H */
+#ifndef __NET_NET_NAMESPACE_H
+#define __NET_NET_NAMESPACE_H
+
+#endif /* __NET_NET_NAMESPACE_H */
+
+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)) */

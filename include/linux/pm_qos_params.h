@@ -1,8 +1,7 @@
 #include <linux/version.h>
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,25))
-#include_next <linux/pm_qos_params.h>
-#else
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25))
+
 /* interface for the pm_qos_power infrastructure of the linux kernel.
  *
  * Mark Gross <mgross@linux.intel.com>
@@ -28,5 +27,5 @@ int pm_qos_requirement(int qos);
 
 int pm_qos_add_notifier(int qos, struct notifier_block *notifier);
 int pm_qos_remove_notifier(int qos, struct notifier_block *notifier);
-#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,25)) */
 
+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)) */
