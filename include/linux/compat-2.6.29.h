@@ -229,7 +229,8 @@ static inline struct sk_buff *skb_queue_prev(const struct sk_buff_head *list,
 }
 
 
-static inline struct net_device_stats *dev_get_stats(struct net_device *dev)
+static inline const struct net_device_stats *
+dev_get_stats(struct net_device *dev)
 {
 	return dev->get_stats(dev);
 }
