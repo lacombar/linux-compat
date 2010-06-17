@@ -56,6 +56,8 @@ static inline u16 skb_get_queue_mapping(struct sk_buff *skb)
 
 /* <linux/netdevice.h> */
 #ifdef _LINUX_NETDEVICE_H
+#include <net/net_namespace.h>
+
 /* On older kernels we handle this a bit differently, so we yield to that
  * code for its implementation in mq_compat.h as we want to make
  * use of the internal mac80211 __ieee80211_queue_stopped() which itself
