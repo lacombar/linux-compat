@@ -101,6 +101,10 @@ static inline struct rtable *skb_rtable(const struct sk_buff *skb)
 }
 
 /* Backport threaded IRQ support */
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,19))
+typedef irqreturn_t (*irq_handler_t)(int, void *, struct pt_regs *);
+#endif
+
 struct compat_threaded_irq {
 	unsigned int irq;
 	irq_handler_t handler;
@@ -117,7 +121,11 @@ void compat_irq_work(void *arg)
 {
 	struct work_struct *work = arg;
 	struct compat_threaded_irq *comp = container_of(work, struct compat_threaded_irq, work);
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,19))
+	comp->thread_fn(comp->irq, comp->dev_id, NULL);
+#else
 	comp->thread_fn(comp->irq, comp->dev_id);
+#endif
 }
 #else
 static inline
@@ -128,13 +136,22 @@ void compat_irq_work(struct work_struct *work)
 }
 #endif
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,19))
+static inline
+irqreturn_t compat_irq_dispatcher(int irq, void *dev_id, struct pt_regs *regs)
+#else
 static inline
 irqreturn_t compat_irq_dispatcher(int irq, void *dev_id)
+#endif
 {
 	struct compat_threaded_irq *comp = dev_id;
 	irqreturn_t res;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,19))
+	res = comp->handler(irq, comp->dev_id, regs);
+#else
 	res = comp->handler(irq, comp->dev_id);
+#endif
 	if (res == IRQ_WAKE_THREAD) {
 		queue_work(comp->wq, &comp->work);
 		res = IRQ_HANDLED;
