@@ -27,7 +27,9 @@ enum dpm_order {
 
 static inline void dev_set_uevent_suppress(struct device *dev, int val)
 {
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,21))
 	dev->uevent_suppress = val;
+#endif
 }
 
 /*
