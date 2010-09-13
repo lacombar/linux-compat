@@ -12,6 +12,7 @@
 #define kparam_block_sysfs_write(a)
 #define kparam_unblock_sysfs_write(a)
 
+#include <stdarg.h>
 struct va_format {
 	const char *fmt;
 	va_list *va;
