@@ -5,20 +5,25 @@
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36))
 
-#include <linux/usb.h>
-#include <pcmcia/cistpl.h>
-#include <pcmcia/ds.h>
-
+/* <linux/moduleparam.h> */
+#ifdef _LINUX_MODULE_PARAMS_H
 #define kparam_block_sysfs_write(a)
 #define kparam_unblock_sysfs_write(a)
+#endif
 
+/* <linux/kernel.h> */
+#ifdef _LINUX_KERNEL_H
 #include <stdarg.h>
 struct va_format {
 	const char *fmt;
 	va_list *va;
 };
+#endif
 
+/* <linux/device.h> */
+#ifdef _DEVICE_H_
 #define device_rename(dev, new_name) device_rename(dev, (char *)new_name)
+#endif
 
 #ifdef CONFIG_COMPAT_USB_URB_THREAD_FIX
 #define usb_scuttle_anchored_urbs(anchor)	compat_usb_scuttle_anchored_urbs(anchor)
