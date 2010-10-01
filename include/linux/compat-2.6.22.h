@@ -80,6 +80,26 @@ static inline void skb_copy_from_linear_data_offset(const struct sk_buff *skb,
 	memcpy(to, skb->data + offset, len);
 }
 
+static inline struct iphdr *ip_hdr(const struct sk_buff *skb)
+{
+	return (struct iphdr *)skb_network_header(skb);
+}
+
+static inline struct tcphdr *tcp_hdr(const struct sk_buff *skb)
+{
+	return (struct tcphdr *)skb_transport_header(skb);
+}
+
+static inline unsigned int tcp_hdrlen(const struct sk_buff *skb)
+{
+	return tcp_hdr(skb)->doff * 4;
+}
+
+static inline unsigned int tcp_optlen(const struct sk_buff *skb)
+{
+	return (tcp_hdr(skb)->doff - 5) * 4;
+}
+
 #if defined(__GNUC__)
 #define __maybe_unused		__attribute__((unused))
 #define uninitialized_var(x)	x = x
