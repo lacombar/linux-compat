@@ -46,7 +46,7 @@ static inline void skb_set_transport_header(struct sk_buff *skb, int offset)
 	skb->h.raw = skb->data + offset;
 }
 
-static inline unsigned char *skb_transport_header(struct sk_buff *skb)
+static inline unsigned char *skb_transport_header(const struct sk_buff *skb)
 {
 	return skb->h.raw;
 }
